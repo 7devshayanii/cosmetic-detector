@@ -7,7 +7,7 @@ from cosmetic_detector.scanner import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
-    path('results/', views.results, name='results'),
+    path('results/<int:scan_id>/', views.results, name='results'),
     path('api/scan/', views.scan_image, name='scan_image'),
 ]
 

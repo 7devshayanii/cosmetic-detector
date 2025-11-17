@@ -169,8 +169,13 @@ scanBtn.addEventListener('click', async () => {
             return;
         }
         
-        const resultsUrl = '/results/?data=' + encodeURIComponent(JSON.stringify(data));
-        window.location.href = resultsUrl;
+        if (data.scan_id) {
+            window.location.href = `/results/${data.scan_id}/`;
+        } else {
+            alert('Error: No scan ID received');
+            loadingSection.style.display = 'none';
+            previewSection.style.display = 'block';
+        }
         
     } catch (error) {
         console.error('Scan error:', error);

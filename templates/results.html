@@ -29,7 +29,28 @@
     <main class="container results-container">
         <div class="results-header">
             <h1>Analysis Results</h1>
-            <div id="safetyBadgeContainer"></div>
+            <div>
+                {% if safety_rating == 'SAFE' %}
+                    <div class="safety-badge badge-safe">{{ safety_rating }}</div>
+                {% elif safety_rating == 'CAUTION' %}
+                    <div class="safety-badge badge-caution">{{ safety_rating }}</div>
+                {% elif safety_rating == 'HARMFUL' %}
+                    <div class="safety-badge badge-harmful">{{ safety_rating }}</div>
+                {% endif %}
+                
+                <div class="veg-badge">
+                    {% if veg_status == 'VEG' %}
+                        <span>🌱</span>
+                        <span>Vegetarian</span>
+                    {% elif veg_status == 'NON_VEG' %}
+                        <span>🥩</span>
+                        <span>Non-Vegetarian</span>
+                    {% else %}
+                        <span>❓</span>
+                        <span>Unknown</span>
+                    {% endif %}
+                </div>
+            </div>
         </div>
 
         <div class="glass-card results-section">
@@ -37,18 +58,45 @@
                 <span>📄</span>
                 Extracted Ingredients
             </h2>
-            <div class="extracted-text-box" id="extractedText">
-                Loading...
+            <div class="extracted-text-box">
+                {{ extracted_text|default:"No text extracted" }}
             </div>
         </div>
 
-        <div class="glass-card results-section" id="harmfulSection">
-            <h2 class="section-title">
-                <span>⚠️</span>
-                Harmful Ingredients Detected
-            </h2>
-            <div class="harmful-list" id="harmfulList"></div>
-        </div>
+        {% if harmful_ingredients %}
+            <div class="glass-card results-section">
+                <h2 class="section-title">
+                    <span>⚠️</span>
+                    Harmful Ingredients Detected
+                </h2>
+                <div class="harmful-list">
+                    {% for item in harmful_ingredients %}
+                        <div class="harmful-item" style="animation-delay: 0.{{ forloop.counter0 }}s">
+                            <div class="harmful-item-header">
+                                <div class="harmful-icon">⚠️</div>
+                                <div class="harmful-name">
+                                    <h3>{{ item.name }}</h3>
+                                    <div class="category">{{ item.category }}</div>
+                                </div>
+                            </div>
+                            <ul class="reasons-list">
+                                {% for reason in item.reasons %}
+                                    <li>{{ reason }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            <div class="glass-card results-section">
+                <div class="safe-message">
+                    <div class="icon">✅</div>
+                    <h3>Great News!</h3>
+                    <p>No harmful ingredients detected in this product.</p>
+                </div>
+            </div>
+        {% endif %}
 
         <div style="text-align: center;">
             <a href="/" class="back-btn">
@@ -59,83 +107,5 @@
             </a>
         </div>
     </main>
-
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const resultsData = urlParams.get('data');
-        
-        if (resultsData) {
-            try {
-                const data = JSON.parse(decodeURIComponent(resultsData));
-                displayResults(data);
-            } catch (e) {
-                console.error('Error parsing results:', e);
-                document.getElementById('extractedText').textContent = 'Error loading results';
-            }
-        } else {
-            document.getElementById('extractedText').textContent = 'No results available';
-        }
-
-        function displayResults(data) {
-            const safetyBadgeContainer = document.getElementById('safetyBadgeContainer');
-            const extractedTextEl = document.getElementById('extractedText');
-            const harmfulListEl = document.getElementById('harmfulList');
-            const harmfulSectionEl = document.getElementById('harmfulSection');
-
-            let safetyClass = 'badge-safe';
-            if (data.safety_rating === 'CAUTION') {
-                safetyClass = 'badge-caution';
-            } else if (data.safety_rating === 'HARMFUL') {
-                safetyClass = 'badge-harmful';
-            }
-
-            let vegIcon = '🌱';
-            let vegText = 'Vegetarian';
-            if (data.veg_status === 'NON_VEG') {
-                vegIcon = '🥩';
-                vegText = 'Non-Vegetarian';
-            }
-
-            safetyBadgeContainer.innerHTML = `
-                <div class="safety-badge ${safetyClass}">${data.safety_rating}</div>
-                <div class="veg-badge">
-                    <span>${vegIcon}</span>
-                    <span>${vegText}</span>
-                </div>
-            `;
-
-            extractedTextEl.textContent = data.extracted_text || 'No text extracted';
-
-            if (data.harmful_ingredients && data.harmful_ingredients.length > 0) {
-                harmfulListEl.innerHTML = data.harmful_ingredients.map((item, index) => `
-                    <div class="harmful-item" style="animation-delay: ${index * 0.1}s">
-                        <div class="harmful-item-header">
-                            <div class="harmful-icon">⚠️</div>
-                            <div class="harmful-name">
-                                <h3>${item.name}</h3>
-                                <div class="category">${item.category}</div>
-                            </div>
-                        </div>
-                        <ul class="reasons-list">
-                            ${item.reasons.map(reason => `<li>${reason}</li>`).join('')}
-                        </ul>
-                    </div>
-                `).join('');
-            } else {
-                harmfulSectionEl.style.display = 'none';
-                
-                const safeMessageEl = document.createElement('div');
-                safeMessageEl.className = 'glass-card results-section';
-                safeMessageEl.innerHTML = `
-                    <div class="safe-message">
-                        <div class="icon">✅</div>
-                        <h3>Great News!</h3>
-                        <p>No harmful ingredients detected in this product.</p>
-                    </div>
-                `;
-                harmfulSectionEl.parentNode.insertBefore(safeMessageEl, harmfulSectionEl);
-            }
-        }
-    </script>
 </body>
 </html>

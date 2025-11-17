@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -13,8 +13,18 @@ def index(request):
     return render(request, 'index.html')
 
 
-def results(request):
-    return render(request, 'results.html')
+def results(request, scan_id):
+    scan = get_object_or_404(Scan, id=scan_id)
+    
+    context = {
+        'scan': scan,
+        'extracted_text': scan.extracted_text,
+        'harmful_ingredients': scan.harmful_ingredients,
+        'safety_rating': scan.safety_rating,
+        'veg_status': scan.veg_status,
+    }
+    
+    return render(request, 'results.html', context)
 
 
 @csrf_exempt
@@ -34,12 +44,15 @@ def scan_image(request):
         extracted_text = pytesseract.image_to_string(img)
         
         if not extracted_text.strip():
+            scan.extracted_text = 'No text detected'
+            scan.safety_rating = 'SAFE'
+            scan.veg_status = 'UNKNOWN'
+            scan.save()
+            
             return JsonResponse({
-                'error': 'No text detected in image',
-                'extracted_text': '',
-                'harmful_ingredients': [],
-                'safety_rating': 'UNKNOWN',
-                'veg_status': 'UNKNOWN'
+                'success': True,
+                'scan_id': scan.id,
+                'message': 'No text detected in image'
             }, status=200)
         
         analysis = analyze_ingredients(extracted_text)
@@ -52,13 +65,7 @@ def scan_image(request):
         
         return JsonResponse({
             'success': True,
-            'scan_id': scan.id,
-            'extracted_text': extracted_text,
-            'harmful_ingredients': analysis['harmful_ingredients'],
-            'safety_rating': analysis['safety_rating'],
-            'veg_status': analysis['veg_status'],
-            'animal_ingredients': analysis['animal_ingredients'],
-            'harmful_count': analysis['harmful_count']
+            'scan_id': scan.id
         })
     
     except Exception as e:
