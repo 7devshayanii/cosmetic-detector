@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmetic Ingredient Detector</title>
+    <link rel="stylesheet" href="/static/styles/main.css">
+</head>
+<body>
+    <div class="background-gradient"></div>
+    
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">
+                <span class="logo-icon">🧴</span>
+                <span class="logo-text">Cosmetic Detector</span>
+            </div>
+            <div class="nav-actions">
+                <button class="profile-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="hero-section">
+            <h1 class="title">
+                Discover What's in Your
+                <span class="gradient-text">Cosmetics</span>
+            </h1>
+            <p class="subtitle">
+                Upload a photo of your cosmetic product ingredients and get instant analysis
+            </p>
+        </div>
+
+        <div class="upload-section">
+            <div class="glass-card upload-card">
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="upload-area" id="uploadArea">
+                        <input type="file" id="fileInput" accept="image/*" hidden>
+                        <div class="upload-icon-wrapper">
+                            <div class="upload-icon">
+                                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 class="upload-title">Upload Product Image</h3>
+                        <p class="upload-description">Click to browse or drag and drop</p>
+                        <p class="upload-hint">Supports: JPG, PNG, JPEG</p>
+                    </div>
+                    
+                    <div class="camera-option">
+                        <div class="divider">
+                            <span>OR</span>
+                        </div>
+                        <button type="button" class="camera-btn" id="cameraBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                <circle cx="12" cy="13" r="4"></circle>
+                            </svg>
+                            Use Camera
+                        </button>
+                    </div>
+                </form>
+
+                <div class="preview-section" id="previewSection" style="display: none;">
+                    <img id="previewImage" alt="Preview">
+                    <div class="preview-actions">
+                        <button class="btn-secondary" id="cancelBtn">Cancel</button>
+                        <button class="btn-primary" id="scanBtn">
+                            <span>Scan Ingredients</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="loading-section" id="loadingSection" style="display: none;">
+                    <div class="loader"></div>
+                    <p class="loading-text">Analyzing ingredients...</p>
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card glass-card">
+                    <div class="feature-icon">🔬</div>
+                    <h3>OCR Detection</h3>
+                    <p>Advanced text extraction from product labels</p>
+                </div>
+                <div class="feature-card glass-card">
+                    <div class="feature-icon">⚠️</div>
+                    <h3>Harmful Analysis</h3>
+                    <p>Identifies dangerous cosmetic ingredients</p>
+                </div>
+                <div class="feature-card glass-card">
+                    <div class="feature-icon">🌱</div>
+                    <h3>Veg Status</h3>
+                    <p>Detects animal-derived ingredients</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/static/scripts/app.js"></script>
+</body>
+</html>
