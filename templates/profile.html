@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+{% load i18n %}
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "Profile - Cosmetic Detector" %}</title>
+    <link rel="stylesheet" href="/static/styles/main.css">
+    <style>
+        * { color: black !important; }
+        
+        .profile-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .profile-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .profile-header h1 {
+            font-size: 2rem;
+        }
+        
+        .btn-logout {
+            background: #dc3545;
+            color: white !important;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .form-group small {
+            color: #666 !important;
+            font-size: 0.85rem;
+            display: block;
+            margin-top: 0.25rem;
+        }
+        
+        .btn-save {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white !important;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .messages {
+            margin-bottom: 1.5rem;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24 !important;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724 !important;
+        }
+        
+        .profile-info {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+        
+        .profile-info p {
+            margin-bottom: 0.5rem;
+            color: #666 !important;
+        }
+        
+        .profile-info strong {
+            color: #333 !important;
+        }
+        
+        .language-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-right: 1rem;
+        }
+        
+        .lang-btn {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #ddd;
+            background: white;
+            color: #333;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .lang-btn.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        
+        .lang-btn:hover {
+            background: #f8f9fa;
+            text-decoration: none;
+            color: #333;
+        }
+        
+        .lang-btn.active:hover {
+            background: #0056b3;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-gradient"></div>
+    
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">
+                <a href="{% url 'index' %}" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                    <span class="logo-icon">🧴</span>
+                    <span class="logo-text">{% trans "Cosmetic Detector" %}</span>
+                </a>
+            </div>
+            <div class="nav-actions">
+                <!-- REPLACE YOUR EXISTING language-toggle div WITH THIS -->
+                <div class="language-toggle">
+                    <form method="post" action="{% url 'set_language' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                        <input name="language" type="hidden" value="en">
+                        <button type="submit" class="lang-btn {% if LANGUAGE_CODE == 'en' %}active{% endif %}">EN</button>
+                    </form>
+                    <form method="post" action="{% url 'set_language' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                        <input name="language" type="hidden" value="mr">
+                        <button type="submit" class="lang-btn {% if LANGUAGE_CODE == 'mr' %}active{% endif %}">मराठी</button>
+                    </form>
+                </div>
+                <div class="nav-links">
+                    <a href="{% url 'index' %}" class="btn-secondary">{% trans "Home" %}</a>
+                    <a href="{% url 'search_history' %}" class="btn-secondary">{% trans "History" %}</a>
+                    <a href="{% url 'logout' %}" class="btn-logout">{% trans "Logout" %}</a>
+                </div>
+            </div>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <span id="menuIcon">☰</span>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="nav-links mobile-menu" id="mobileMenu">
+            <a href="{% url 'index' %}">{% trans "Home" %}</a>
+            <a href="{% url 'search_history' %}">{% trans "History" %}</a>
+            <a href="{% url 'logout' %}">{% trans "Logout" %}</a>
+        </div>
+    </nav>
+
+    <main class="profile-container">
+        <div class="profile-card">
+            <div class="profile-header">
+                <h1>{% trans "My Profile" %}</h1>
+            </div>
+            
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="profile-info">
+                <p><strong>{% trans "Email:" %}</strong> {{ user.email }}</p>
+                <p><strong>{% trans "Member Since:" %}</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+            </div>
+            
+            <form method="POST" action="{% url 'profile' %}">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" value="{{ user.first_name|default:user.username }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age" value="{{ user.profile.age }}" min="1" max="120" required>
+                    <small>Required for age-based safety recommendations</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="allergies">Allergies</label>
+                    <textarea id="allergies" name="allergies" placeholder="e.g., fragrance, lanolin, parabens (comma-separated)">{{ user.profile.allergies }}</textarea>
+                    <small>Help us identify ingredients that might cause allergic reactions</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="health_conditions">Health Conditions</label>
+                    <textarea id="health_conditions" name="health_conditions" placeholder="e.g., eczema, asthma, pregnancy (comma-separated)">{{ user.profile.health_conditions }}</textarea>
+                    <small>Optional: For personalized safety warnings</small>
+                </div>
+                
+                <button type="submit" class="btn-save">Save Changes</button>
+            </form>
+        </div>
+        
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 1.5rem; margin-top: 2rem; border-top: 1px solid rgba(0,0,0,0.1); font-size: 0.9rem; color: #666;">
+            <p style="margin: 0.3rem 0;"><strong>© 2026 Cosmetic Ingredient Detector</strong></p>
+            <p style="margin: 0.3rem 0;">Developed for Academic Project</p>
+        </footer>
+    </main>
+    
+    <!-- Mobile Menu Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuIcon = document.getElementById('menuIcon');
+            
+            if (mobileMenuToggle && mobileMenu) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('show');
+                    menuIcon.textContent = mobileMenu.classList.contains('show') ? '✕' : '☰';
+                });
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!mobileMenuToggle.contains(event.target) && !mobileMenu.contains(event.target)) {
+                        mobileMenu.classList.remove('show');
+                        menuIcon.textContent = '☰';
+                    }
+                });
+                
+                // Close menu when clicking a link
+                mobileMenu.addEventListener('click', function(event) {
+                    if (event.target.tagName === 'A') {
+                        mobileMenu.classList.remove('show');
+                        menuIcon.textContent = '☰';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('extracted_text', models.TextField(blank=True)),
                 ('harmful_ingredients', models.JSONField(default=list)),
                 ('safety_rating', models.CharField(choices=[('SAFE', 'Safe'), ('CAUTION', 'Caution'), ('HARMFUL', 'Harmful')], default='SAFE', max_length=10)),
-                ('veg_status', models.CharField(choices=[('VEG', 'Vegetarian'), ('NON_VEG', 'Non-Vegetarian'), ('UNKNOWN', 'Unknown')], default='UNKNOWN', max_length=10)),
+                ('veg_status', models.CharField(choices=[('VEG', 'Vegetarian'), ('ANIMAL_DERIVED', 'Animal Derived'), ('UNKNOWN', 'Unknown')], default='UNKNOWN', max_length=10)),
                 ('scanned_at', models.DateTimeField(auto_now_add=True)),
             ],
             options={

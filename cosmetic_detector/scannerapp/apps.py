@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class ScannerConfig(AppConfig):
+class ScannerappConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'cosmetic_detector.scanner'
+    name = 'cosmetic_detector.scannerapp'

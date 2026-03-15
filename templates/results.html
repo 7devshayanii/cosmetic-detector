@@ -1,10 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+{% load i18n %}
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scan Results - Cosmetic Ingredient Detector</title>
+    <title>{% trans "Scan Results - Cosmetic Ingredient Detector" %}</title>
     <link rel="stylesheet" href="/static/styles/main.css">
+    <style>
+        * {
+            color: black !important;
+        }
+        .highlight {
+            background-color: yellow;
+            font-weight: bold;
+        }
+        
+        .language-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-right: 1rem;
+        }
+        
+        .lang-btn {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #ddd;
+            background: white;
+            color: #333;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .lang-btn.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        
+        .lang-btn:hover {
+            background: #f8f9fa;
+            text-decoration: none;
+            color: #333;
+        }
+        
+        .lang-btn.active:hover {
+            background: #0056b3;
+            color: white;
+        }
+    </style>
 </head>
 <body>
     <div class="background-gradient"></div>
@@ -13,22 +58,80 @@
         <div class="nav-content">
             <div class="logo">
                 <span class="logo-icon">🧴</span>
-                <span class="logo-text">Cosmetic Detector</span>
+                <span class="logo-text">{% trans "Cosmetic Detector" %}</span>
             </div>
             <div class="nav-actions">
-                <button class="profile-btn">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                </button>
+                <!-- REPLACE YOUR EXISTING language-toggle div WITH THIS -->
+                <div class="language-toggle">
+                    <form method="post" action="{% url 'set_language' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                        <input name="language" type="hidden" value="en">
+                        <button type="submit" class="lang-btn {% if LANGUAGE_CODE == 'en' %}active{% endif %}">EN</button>
+                    </form>
+                    <form method="post" action="{% url 'set_language' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                        <input name="language" type="hidden" value="mr">
+                        <button type="submit" class="lang-btn {% if LANGUAGE_CODE == 'mr' %}active{% endif %}">मराठी</button>
+                    </form>
+                </div>
+                {% if user.is_authenticated %}
+                    <div class="nav-links">
+                        <a href="{% url 'search_history' %}" class="btn-secondary">{% trans "History" %}</a>
+                        <a href="{% url 'profile' %}" class="btn-secondary">{% trans "Profile" %}</a>
+                        <a href="{% url 'disclaimer' %}" class="btn-secondary">{% trans "Disclaimer" %}</a>
+                        <a href="{% url 'logout' %}" class="btn-secondary">{% trans "Logout" %}</a>
+                    </div>
+                {% else %}
+                    <div class="nav-links">
+                        <a href="{% url 'disclaimer' %}" class="btn-secondary">{% trans "Disclaimer" %}</a>
+                        <a href="{% url 'login' %}" class="btn-secondary">{% trans "Login" %}</a>
+                        <a href="{% url 'register' %}" class="btn-primary">{% trans "Register" %}</a>
+                    </div>
+                {% endif %}
             </div>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <span id="menuIcon">☰</span>
+            </button>
         </div>
+        
+        <!-- Mobile Menu -->
+        {% if user.is_authenticated %}
+            <div class="nav-links mobile-menu" id="mobileMenu">
+                <a href="{% url 'search_history' %}">{% trans "History" %}</a>
+                <a href="{% url 'profile' %}">{% trans "Profile" %}</a>
+                <a href="{% url 'disclaimer' %}">{% trans "Disclaimer" %}</a>
+                <a href="{% url 'logout' %}">{% trans "Logout" %}</a>
+            </div>
+        {% else %}
+            <div class="nav-links mobile-menu" id="mobileMenu">
+                <a href="{% url 'disclaimer' %}">{% trans "Disclaimer" %}</a>
+                <a href="{% url 'login' %}">{% trans "Login" %}</a>
+                <a href="{% url 'register' %}">{% trans "Register" %}</a>
+            </div>
+        {% endif %}
     </nav>
 
     <main class="container results-container">
+        {% if scan.product_name %}
+        <div style="text-align: center; margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 3px solid #667eea;">
+            <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                {{ scan.product_name }}
+            </h1>
+            {% if scan.product_brand and scan.product_brand != 'Unknown' %}
+            <p style="font-size: 1.25rem; color: #666 !important; margin-bottom: 0.25rem;">
+                {% trans "Brand:" %} <strong style="color: #333 !important;">{{ scan.product_brand }}</strong>
+            </p>
+            {% endif %}
+            <p style="font-size: 0.9rem; color: #999 !important;">
+                {% trans "Scanned via:" %} {{ scan.get_source_display }} • {{ scan.scanned_at|date:"M d, Y - g:i A" }}
+            </p>
+        </div>
+        {% endif %}
+
         <div class="results-header">
-            <h1>Analysis Results</h1>
+            <h1>{% trans "Analysis Results" %}</h1>
             <div>
                 {% if safety_rating == 'SAFE' %}
                     <div class="safety-badge badge-safe">{{ safety_rating }}</div>
@@ -41,13 +144,13 @@
                 <div class="veg-badge">
                     {% if veg_status == 'VEG' %}
                         <span>🌱</span>
-                        <span>Vegetarian</span>
-                    {% elif veg_status == 'NON_VEG' %}
+                        <span>{% trans "Vegetarian" %}</span>
+                    {% elif veg_status == 'ANIMAL_DERIVED' %}
                         <span>🥩</span>
-                        <span>Non-Vegetarian</span>
+                        <span>{% trans "Animal Derived" %}</span>
                     {% else %}
                         <span>❓</span>
-                        <span>Unknown</span>
+                        <span>{% trans "Unknown" %}</span>
                     {% endif %}
                 </div>
             </div>
@@ -56,56 +159,173 @@
         <div class="glass-card results-section">
             <h2 class="section-title">
                 <span>📄</span>
-                Extracted Ingredients
+                {% trans "Extracted Ingredients" %}
             </h2>
             <div class="extracted-text-box">
-                {{ extracted_text|default:"No text extracted" }}
+                {{ highlighted_text|default:"No text extracted" }}
             </div>
         </div>
 
         {% if harmful_ingredients %}
-            <div class="glass-card results-section">
-                <h2 class="section-title">
-                    <span>⚠️</span>
-                    Harmful Ingredients Detected
-                </h2>
-                <div class="harmful-list">
-                    {% for item in harmful_ingredients %}
-                        <div class="harmful-item" style="animation-delay: 0.{{ forloop.counter0 }}s">
-                            <div class="harmful-item-header">
-                                <div class="harmful-icon">⚠️</div>
-                                <div class="harmful-name">
-                                    <h3>{{ item.name }}</h3>
-                                    <div class="category">{{ item.category }}</div>
+            <!-- REGISTERED USERS: Show full details -->
+            {% if user.is_authenticated %}
+                <div class="glass-card results-section">
+                    <h2 class="section-title">
+                        <span>⚠️</span>
+                        {% trans "Harmful Ingredients Detected" %}
+                    </h2>
+                    <div class="harmful-list">
+                        {% for item in harmful_ingredients %}
+                            <div class="harmful-item" style="animation-delay: 0.{{ forloop.counter0 }}s">
+                                <div class="harmful-item-header">
+                                    <div class="harmful-icon">⚠️</div>
+                                    <div class="harmful-name">
+                                        <h3>{{ item.name }}</h3>
+                                        <div class="category">{{ item.category }}</div>
+
+                                        <!-- ✅ RISK LEVEL ADDED HERE -->
+                                        <div class="risk-level">
+                                            <strong>{% trans "Risk Level:" %}</strong> {{ item.risk_level }}
+                                        </div>
+                                    </div>
                                 </div>
+                                <ul class="reasons-list">
+                                    {% for reason in item.reasons %}
+                                        <li>{{ reason }}</li>
+                                    {% endfor %}
+                                </ul>
                             </div>
-                            <ul class="reasons-list">
-                                {% for reason in item.reasons %}
-                                    <li>{{ reason }}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% endfor %}
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
+            <!-- GUEST USERS: Show only basic harmful status -->
+            {% else %}
+                <div class="glass-card results-section">
+                    <div style="text-align: center; padding: 2rem;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+                        <h3 style="color: #d32f2f; margin-bottom: 1rem;">{% trans "Harmful Ingredients Detected" %}</h3>
+                        <p style="color: #666; font-size: 1.1rem; margin-bottom: 1.5rem;">
+                            {% trans "This product contains ingredients that may not be suitable for general use." %}
+                        </p>
+                        <a href="{% url 'register' %}" class="btn-primary" style="display: inline-block; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                            🔓 {% trans "Register for More Details" %}
+                        </a>
+                        <p style="color: #999; font-size: 0.9rem; margin-top: 1rem;">
+                            {% trans "Sign up to see detailed risk levels, ingredient reasons, and personalized recommendations" %}
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
         {% else %}
             <div class="glass-card results-section">
                 <div class="safe-message">
                     <div class="icon">✅</div>
-                    <h3>Great News!</h3>
-                    <p>No harmful ingredients detected in this product.</p>
+                    <h3>{% trans "Great News!" %}</h3>
+                    <p>{% trans "No harmful ingredients detected in this product." %}</p>
                 </div>
             </div>
         {% endif %}
+
+{% if user.is_authenticated %}
+    {% if scan.personalized_warnings %}
+    <div class="glass-card" style="margin-top: 1rem; border-left: 4px solid #ff9800;">
+        <h3>⚠️ {% trans "Personalized Warnings" %}</h3>
+        
+        {% for warning in scan.personalized_warnings %}
+        <div style="padding: 0.75rem; margin: 0.5rem 0; background: 
+            {% if warning.severity == 'critical' %}#ffebee
+            {% elif warning.severity == 'high' %}#fff3e0
+            {% else %}#f3f3f3{% endif %}; 
+            border-radius: 8px;">
+            
+            <strong>{{ warning.ingredient }}</strong>
+            {% if warning.type == 'age_restriction' %}
+                <p>🔞 {{ warning.message }}</p>
+            {% elif warning.type == 'allergy' %}
+                <p>🤧 {{ warning.message }}</p>
+            {% elif warning.type == 'health_condition' %}
+                <p>⚕️ {{ warning.message }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- INGREDIENT SOURCE (Animal/Plant/Synthetic) -->
+    <div class="glass-card" style="margin-top: 1rem;">
+        <h3>🌿 {% trans "Ingredient Source" %}</h3>
+        <p><strong>{% trans "Classification:" %}</strong> {{ scan.get_ingredient_source_display }}</p>
+        
+        {% if scan.animal_ingredients %}
+        <div style="margin-top: 1rem;">
+            <strong>{% trans "Animal-Derived Ingredients Found:" %}</strong>
+            <ul>
+                {% for ingredient in scan.animal_ingredients %}
+                <li>{{ ingredient }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+{% else %}
+    <!-- GUEST USER: Show registration prompt -->
+    <div class="glass-card" style="margin-top: 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem; text-align: center;">
+        <h3 style="color: white; margin-bottom: 1rem;">🔒 {% trans "Unlock Personalized Analysis" %}</h3>
+        <p style="color: rgba(255,255,255,0.9); margin-bottom: 1.5rem; font-size: 1.05rem;">
+            {% trans "See detailed safety warnings based on your age, allergies, and health conditions" %}
+        </p>
+        <a href="{% url 'register' %}" class="btn-primary" style="display: inline-block; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 8px; font-weight: bold; background-color: white; color: #667eea;">
+            ✨ {% trans "Sign Up Now" %}
+        </a>
+    </div>
+{% endif %}
 
         <div style="text-align: center;">
             <a href="/" class="back-btn">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
-                Scan Another Product
+                {% trans "Scan Another Product" %}
             </a>
         </div>
+        
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 1.5rem; margin-top: 2rem; border-top: 1px solid rgba(0,0,0,0.1); font-size: 0.9rem; color: #666;">
+            <p style="margin: 0.3rem 0;"><strong>© 2026 Cosmetic Ingredient Detector</strong></p>
+            <p style="margin: 0.3rem 0;">Developed for Academic Project</p>
+        </footer>
     </main>
+
+    <!-- Mobile Menu Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuIcon = document.getElementById('menuIcon');
+            
+            if (mobileMenuToggle && mobileMenu) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('show');
+                    menuIcon.textContent = mobileMenu.classList.contains('show') ? '✕' : '☰';
+                });
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!mobileMenuToggle.contains(event.target) && !mobileMenu.contains(event.target)) {
+                        mobileMenu.classList.remove('show');
+                        menuIcon.textContent = '☰';
+                    }
+                });
+                
+                // Close menu when clicking a link
+                mobileMenu.addEventListener('click', function(event) {
+                    if (event.target.tagName === 'A') {
+                        mobileMenu.classList.remove('show');
+                        menuIcon.textContent = '☰';
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

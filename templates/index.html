@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cosmetic Ingredient Detector</title>
     <link rel="stylesheet" href="/static/styles/main.css">
+    <style>
+        * {
+            color: black !important;
+        }
+    </style>
 </head>
+
 <body>
     <div class="background-gradient"></div>
-    
+
     <nav class="navbar">
         <div class="nav-content">
             <div class="logo">
@@ -16,14 +23,41 @@
                 <span class="logo-text">Cosmetic Detector</span>
             </div>
             <div class="nav-actions">
-                <button class="profile-btn">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                </button>
+                {% if user.is_authenticated %}
+                <div class="nav-links">
+                    <a href="{% url 'search_history' %}" class="btn-secondary">History</a>
+                    <a href="{% url 'profile' %}" class="btn-secondary">Profile</a>
+                    <a href="{% url 'disclaimer' %}" class="btn-secondary">Disclaimer</a>
+                    <a href="{% url 'logout' %}" class="btn-secondary">Logout</a>
+                </div>
+                {% else %}
+                <div class="nav-links">
+                    <a href="{% url 'disclaimer' %}" class="btn-secondary">Disclaimer</a>
+                    <a href="{% url 'login' %}" class="btn-secondary">Login</a>
+                    <a href="{% url 'register' %}" class="btn-primary">Register</a>
+                </div>
+                {% endif %}
             </div>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <span id="menuIcon">☰</span>
+            </button>
         </div>
+
+        <!-- Mobile Menu -->
+        {% if user.is_authenticated %}
+        <div class="nav-links mobile-menu" id="mobileMenu">
+            <a href="{% url 'search_history' %}">History</a>
+            <a href="{% url 'profile' %}">Profile</a>
+            <a href="{% url 'disclaimer' %}">Disclaimer</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+        {% else %}
+        <div class="nav-links mobile-menu" id="mobileMenu">
+            <a href="{% url 'disclaimer' %}">Disclaimer</a>
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'register' %}">Register</a>
+        </div>
+        {% endif %}
     </nav>
 
     <main class="container">
@@ -32,11 +66,60 @@
                 Discover What's in Your
                 <span class="gradient-text">Cosmetics</span>
             </h1>
+
+            {% if not user.is_authenticated %}
+            <div class="guest-mode-notice" style="margin-top: 1rem; text-align: center;">
+                <p style="color: #000000; font-weight: 500; font-size: 1rem;">
+                    🔓 Working in Guest Mode - Sign up for personalized analysis and history tracking
+                </p>
+            </div>
+            {% endif %}
+
+            <div class="search-section" style="margin-bottom: 2rem; max-width:650px; width:100%; margin:0 auto;">
+                <div class="glass-card" style="width:100%; max-width:100%; padding:1rem;">
+                    <h2 style="margin-bottom: 1rem;">Search by Product Name</h2>
+                    <form id="searchForm">
+                        <div class="search-form-row"
+                            style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem;">
+                            <input type="text" id="searchInput" placeholder="Enter product name -"
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #ddd;"
+                                required />
+                            <button type="submit" id="searchBtn" class="btn-primary" style="align-self: stretch;">
+                                Search Product
+                            </button>
+                        </div>
+
+                        {% if user.is_authenticated %}
+                        <!-- registered users - no additional fields needed -->
+                        {% else %}
+                        <div
+                            style="padding: 0.75rem; background-color: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px; margin-top: 1rem;">
+                            <p style="font-size: 0.95rem; color: #1565c0; margin: 0; font-weight: 500;">
+                                🔒 <a href="{% url 'register' %}"
+                                    style="color: #1565c0; text-decoration: underline; font-weight: bold;">Register for
+                                    more features</a> to unlock age, allergies, and health condition analysis
+                            </p>
+                        </div>
+                        {% endif %}
+                    </form>
+
+                    <div id="searchLoading" style="display: none; text-align: center; padding: 1rem;">
+                        <p>Searching for product...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div style="text-align: center; margin: 2rem 0; color: #666;">
+                <p>OR</p>
+            </div>
+
             <p class="subtitle">
                 Upload a photo of your cosmetic product ingredients and get instant analysis
             </p>
         </div>
 
+        <!-- UPLOAD -->
         <div class="upload-section">
             <div class="glass-card upload-card">
                 <form id="uploadForm" enctype="multipart/form-data">
@@ -44,7 +127,8 @@
                         <input type="file" id="fileInput" accept="image/*" hidden>
                         <div class="upload-icon-wrapper">
                             <div class="upload-icon">
-                                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                     <polyline points="17 8 12 3 7 8"></polyline>
                                     <line x1="12" y1="3" x2="12" y2="15"></line>
@@ -55,14 +139,15 @@
                         <p class="upload-description">Click to browse or drag and drop</p>
                         <p class="upload-hint">Supports: JPG, PNG, JPEG</p>
                     </div>
-                    
+
                     <div class="camera-option">
-                        <div class="divider">
-                            <span>OR</span>
-                        </div>
+                        <div class="divider"><span>OR</span></div>
                         <button type="button" class="camera-btn" id="cameraBtn">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z">
+                                </path>
                                 <circle cx="12" cy="13" r="4"></circle>
                             </svg>
                             Use Camera
@@ -70,45 +155,71 @@
                     </div>
                 </form>
 
+                <!-- PREVIEW -->
                 <div class="preview-section" id="previewSection" style="display: none;">
                     <img id="previewImage" alt="Preview">
                     <div class="preview-actions">
                         <button class="btn-secondary" id="cancelBtn">Cancel</button>
                         <button class="btn-primary" id="scanBtn">
                             <span>Scan Ingredients</span>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <polyline points="9 18 15 12 9 6"></polyline>
                             </svg>
                         </button>
                     </div>
                 </div>
 
+                <!-- LOADING -->
                 <div class="loading-section" id="loadingSection" style="display: none;">
                     <div class="loader"></div>
                     <p class="loading-text">Analyzing ingredients...</p>
                 </div>
             </div>
-
-            <div class="features-grid">
-                <div class="feature-card glass-card">
-                    <div class="feature-icon">🔬</div>
-                    <h3>OCR Detection</h3>
-                    <p>Advanced text extraction from product labels</p>
-                </div>
-                <div class="feature-card glass-card">
-                    <div class="feature-icon">⚠️</div>
-                    <h3>Harmful Analysis</h3>
-                    <p>Identifies dangerous cosmetic ingredients</p>
-                </div>
-                <div class="feature-card glass-card">
-                    <div class="feature-icon">🌱</div>
-                    <h3>Veg Status</h3>
-                    <p>Detects animal-derived ingredients</p>
-                </div>
-            </div>
         </div>
+
+        <!-- Footer -->
+        <footer
+            style="text-align: center; padding: 1.5rem; margin-top: 2rem; border-top: 1px solid rgba(0,0,0,0.1); font-size: 0.9rem; color: #666;">
+            <p style="margin: 0.3rem 0;"><strong>© 2026 Cosmetic Ingredient Detector</strong></p>
+            <p style="margin: 0.3rem 0;">Developed for Academic Project</p>
+        </footer>
     </main>
 
-    <script src="/static/scripts/app.js"></script>
+    <script src="/static/scripts/app.js?v=2"></script>
+    <script src="/static/scripts/search.js?v=2"></script>
+
+    <!-- Mobile Menu Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuIcon = document.getElementById('menuIcon');
+
+            if (mobileMenuToggle && mobileMenu) {
+                mobileMenuToggle.addEventListener('click', function () {
+                    mobileMenu.classList.toggle('show');
+                    menuIcon.textContent = mobileMenu.classList.contains('show') ? '✕' : '☰';
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', function (event) {
+                    if (!mobileMenuToggle.contains(event.target) && !mobileMenu.contains(event.target)) {
+                        mobileMenu.classList.remove('show');
+                        menuIcon.textContent = '☰';
+                    }
+                });
+
+                // Close menu when clicking a link
+                mobileMenu.addEventListener('click', function (event) {
+                    if (event.target.tagName === 'A') {
+                        mobileMenu.classList.remove('show');
+                        menuIcon.textContent = '☰';
+                    }
+                });
+            }
+        });
+    </script>
 </body>
+
 </html>

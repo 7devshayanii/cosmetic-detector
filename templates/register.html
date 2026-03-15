@@ -1,0 +1,279 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Cosmetic Detector</title>
+    <link rel="stylesheet" href="/static/styles/main.css">
+    <style>
+        * {
+            color: black !important;
+        }
+
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header p {
+            color: #666 !important;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group label.required::after {
+            content: ' *';
+            color: #dc3545 !important;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group small {
+            color: #666 !important;
+            font-size: 0.85rem;
+            display: block;
+            margin-top: 0.25rem;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white !important;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666 !important;
+        }
+
+        .auth-footer a {
+            color: #007bff !important;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .messages {
+            margin-bottom: 1.5rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24 !important;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724 !important;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-gradient"></div>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">
+                <span class="logo-icon">🧴</span>
+                <span class="logo-text">{% trans "Cosmetic Detector" %}</span>
+            </div>
+            <div class="nav-actions">
+                <div class="nav-links">
+                    <a href="{% url 'index' %}" class="btn-secondary">{% trans "Home" %}</a>
+                    <a href="{% url 'login' %}" class="btn-primary">{% trans "Login" %}</a>
+                </div>
+            </div>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <span id="menuIcon">☰</span>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="nav-links mobile-menu" id="mobileMenu">
+            <a href="{% url 'index' %}">{% trans "Home" %}</a>
+            <a href="{% url 'login' %}">{% trans "Login" %}</a>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>{% trans "Create Account" %}</h1>
+                <p>{% trans "Join us for personalized cosmetic safety analysis" %}</p>
+            </div>
+
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="{% url 'register' %}">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="name" class="required">{% trans "Full Name" %}</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="required">{% trans "Email" %}</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password1" class="required">{% trans "Password" %}</label>
+                    <input type="password" id="password1" name="password1" required minlength="8">
+                    <small>{% trans "At least 8 characters" %}</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="password2" class="required">{% trans "Confirm Password" %}</label>
+                    <input type="password" id="password2" name="password2" required minlength="8">
+                </div>
+
+                <div class="form-group">
+                    <label for="age" class="required">{% trans "Age" %}</label>
+                    <input type="number" id="age" name="age" min="1" max="120" required>
+                    <small>{% trans "Required for age-based safety recommendations" %}</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="allergies">{% trans "Allergies" %}</label>
+                    <textarea id="allergies" name="allergies"
+                        placeholder="{% trans 'e.g., fragrance, lanolin, parabens (comma-separated)' %}"></textarea>
+                    <small>{% trans "Help us identify ingredients that might cause allergic reactions" %}</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="health_conditions">{% trans "Health Conditions" %}</label>
+                    <textarea id="health_conditions" name="health_conditions"
+                        placeholder="{% trans 'e.g., eczema, asthma, pregnancy (comma-separated)' %}"></textarea>
+                    <small>{% trans "Optional: For personalized safety warnings" %}</small>
+                </div>
+
+                <button type="submit" class="btn-submit">{% trans "Create Account" %}</button>
+            </form>
+
+            <div class="auth-footer">
+                {% trans "Already have an account?" %} <a href="{% url 'login' %}">{% trans "Login here" %}</a>
+            </div>
+
+            <!-- Footer -->
+            <footer
+                style="text-align: center; padding: 1.5rem; margin-top: 2rem; border-top: 1px solid rgba(0,0,0,0.1); font-size: 0.9rem; color: #666;">
+                <p style="margin: 0.3rem 0;"><strong>© 2026 Cosmetic Ingredient Detector</strong></p>
+                <p style="margin: 0.3rem 0;">Developed for Academic Project</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuIcon = document.getElementById('menuIcon');
+
+            if (mobileMenuToggle && mobileMenu) {
+                mobileMenuToggle.addEventListener('click', function () {
+                    mobileMenu.classList.toggle('show');
+                    menuIcon.textContent = mobileMenu.classList.contains('show') ? '✕' : '☰';
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', function (event) {
+                    if (!mobileMenuToggle.contains(event.target) && !mobileMenu.contains(event.target)) {
+                        mobileMenu.classList.remove('show');
+                        menuIcon.textContent = '☰';
+                    }
+                });
+
+                // Close menu when clicking a link
+                mobileMenu.addEventListener('click', function (event) {
+                    if (event.target.tagName === 'A') {
+                        mobileMenu.classList.remove('show');
+                        menuIcon.textContent = '☰';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
