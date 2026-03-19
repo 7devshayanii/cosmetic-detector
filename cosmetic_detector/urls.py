@@ -7,8 +7,7 @@ from cosmetic_detector.scannerapp import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     
-    # Internationalization
-    path('i18n/', include('django.conf.urls.i18n')),
+    # Internationalization URL removed
     
     # Main pages
     path('', views.index, name='index'),

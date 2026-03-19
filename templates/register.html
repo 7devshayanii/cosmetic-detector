@@ -1,4 +1,4 @@
-{% load i18n %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -146,12 +146,12 @@
         <div class="nav-content">
             <div class="logo">
                 <span class="logo-icon">🧴</span>
-                <span class="logo-text">{% trans "Cosmetic Detector" %}</span>
+                <span class="logo-text">Cosmetic Detector</span>
             </div>
             <div class="nav-actions">
                 <div class="nav-links">
-                    <a href="{% url 'index' %}" class="btn-secondary">{% trans "Home" %}</a>
-                    <a href="{% url 'login' %}" class="btn-primary">{% trans "Login" %}</a>
+                    <a href="{% url 'index' %}" class="btn-secondary">Home</a>
+                    <a href="{% url 'login' %}" class="btn-primary">Login</a>
                 </div>
             </div>
             <button class="mobile-menu-toggle" id="mobileMenuToggle">
@@ -161,16 +161,16 @@
 
         <!-- Mobile Menu -->
         <div class="nav-links mobile-menu" id="mobileMenu">
-            <a href="{% url 'index' %}">{% trans "Home" %}</a>
-            <a href="{% url 'login' %}">{% trans "Login" %}</a>
+            <a href="{% url 'index' %}">Home</a>
+            <a href="{% url 'login' %}">Login</a>
         </div>
     </nav>
 
     <div class="auth-container">
         <div class="auth-card">
             <div class="auth-header">
-                <h1>{% trans "Create Account" %}</h1>
-                <p>{% trans "Join us for personalized cosmetic safety analysis" %}</p>
+                <h1>Create Account</h1>
+                <p>Join us for personalized cosmetic safety analysis</p>
             </div>
 
             {% if messages %}
@@ -187,51 +187,51 @@
                 {% csrf_token %}
 
                 <div class="form-group">
-                    <label for="name" class="required">{% trans "Full Name" %}</label>
+                    <label for="name" class="required">Full Name</label>
                     <input type="text" id="name" name="name" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="email" class="required">{% trans "Email" %}</label>
+                    <label for="email" class="required">Email</label>
                     <input type="email" id="email" name="email" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="password1" class="required">{% trans "Password" %}</label>
+                    <label for="password1" class="required">Password</label>
                     <input type="password" id="password1" name="password1" required minlength="8">
-                    <small>{% trans "At least 8 characters" %}</small>
+                    <small>At least 8 characters</small>
                 </div>
 
                 <div class="form-group">
-                    <label for="password2" class="required">{% trans "Confirm Password" %}</label>
+                    <label for="password2" class="required">Confirm Password</label>
                     <input type="password" id="password2" name="password2" required minlength="8">
                 </div>
 
                 <div class="form-group">
-                    <label for="age" class="required">{% trans "Age" %}</label>
+                    <label for="age" class="required">Age</label>
                     <input type="number" id="age" name="age" min="1" max="120" required>
-                    <small>{% trans "Required for age-based safety recommendations" %}</small>
+                    <small>Required for age-based safety recommendations</small>
                 </div>
 
                 <div class="form-group">
-                    <label for="allergies">{% trans "Allergies" %}</label>
+                    <label for="allergies">Allergies</label>
                     <textarea id="allergies" name="allergies"
-                        placeholder="{% trans 'e.g., fragrance, lanolin, parabens (comma-separated)' %}"></textarea>
-                    <small>{% trans "Help us identify ingredients that might cause allergic reactions" %}</small>
+                        placeholder="e.g., fragrance, lanolin, parabens (comma-separated)"></textarea>
+                    <small>Help us identify ingredients that might cause allergic reactions</small>
                 </div>
 
                 <div class="form-group">
-                    <label for="health_conditions">{% trans "Health Conditions" %}</label>
+                    <label for="health_conditions">Health Conditions</label>
                     <textarea id="health_conditions" name="health_conditions"
-                        placeholder="{% trans 'e.g., eczema, asthma, pregnancy (comma-separated)' %}"></textarea>
-                    <small>{% trans "Optional: For personalized safety warnings" %}</small>
+                        placeholder="e.g., eczema, asthma, pregnancy (comma-separated)"></textarea>
+                    <small>Optional: For personalized safety warnings</small>
                 </div>
 
-                <button type="submit" class="btn-submit">{% trans "Create Account" %}</button>
+                <button type="submit" class="btn-submit">Create Account</button>
             </form>
 
             <div class="auth-footer">
-                {% trans "Already have an account?" %} <a href="{% url 'login' %}">{% trans "Login here" %}</a>
+                Already have an account? <a href="{% url 'login' %}">Login here</a>
             </div>
 
             <!-- Footer -->

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-{% load i18n %}
-<html lang="{{ LANGUAGE_CODE }}">
+
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% trans "Profile - Cosmetic Detector" %}</title>
+    <title>Profile - Cosmetic Detector</title>
     <link rel="stylesheet" href="/static/styles/main.css">
     <style>
         * { color: black !important; }
@@ -123,41 +123,6 @@
         .profile-info strong {
             color: #333 !important;
         }
-        
-        .language-toggle {
-            display: flex;
-            gap: 0.5rem;
-            margin-right: 1rem;
-        }
-        
-        .lang-btn {
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #ddd;
-            background: white;
-            color: #333;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            text-decoration: none;
-            display: inline-block;
-        }
-        
-        .lang-btn.active {
-            background: #007bff;
-            color: white;
-            border-color: #007bff;
-        }
-        
-        .lang-btn:hover {
-            background: #f8f9fa;
-            text-decoration: none;
-            color: #333;
-        }
-        
-        .lang-btn.active:hover {
-            background: #0056b3;
-            color: white;
-        }
     </style>
 </head>
 <body>
@@ -168,29 +133,14 @@
             <div class="logo">
                 <a href="{% url 'index' %}" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
                     <span class="logo-icon">🧴</span>
-                    <span class="logo-text">{% trans "Cosmetic Detector" %}</span>
+                    <span class="logo-text">Cosmetic Detector</span>
                 </a>
             </div>
             <div class="nav-actions">
-                <!-- REPLACE YOUR EXISTING language-toggle div WITH THIS -->
-                <div class="language-toggle">
-                    <form method="post" action="{% url 'set_language' %}" style="display:inline;">
-                        {% csrf_token %}
-                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                        <input name="language" type="hidden" value="en">
-                        <button type="submit" class="lang-btn {% if LANGUAGE_CODE == 'en' %}active{% endif %}">EN</button>
-                    </form>
-                    <form method="post" action="{% url 'set_language' %}" style="display:inline;">
-                        {% csrf_token %}
-                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                        <input name="language" type="hidden" value="mr">
-                        <button type="submit" class="lang-btn {% if LANGUAGE_CODE == 'mr' %}active{% endif %}">मराठी</button>
-                    </form>
-                </div>
                 <div class="nav-links">
-                    <a href="{% url 'index' %}" class="btn-secondary">{% trans "Home" %}</a>
-                    <a href="{% url 'search_history' %}" class="btn-secondary">{% trans "History" %}</a>
-                    <a href="{% url 'logout' %}" class="btn-logout">{% trans "Logout" %}</a>
+                    <a href="{% url 'index' %}" class="btn-secondary">Home</a>
+                    <a href="{% url 'search_history' %}" class="btn-secondary">History</a>
+                    <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
                 </div>
             </div>
             <button class="mobile-menu-toggle" id="mobileMenuToggle">
@@ -200,16 +150,16 @@
         
         <!-- Mobile Menu -->
         <div class="nav-links mobile-menu" id="mobileMenu">
-            <a href="{% url 'index' %}">{% trans "Home" %}</a>
-            <a href="{% url 'search_history' %}">{% trans "History" %}</a>
-            <a href="{% url 'logout' %}">{% trans "Logout" %}</a>
+            <a href="{% url 'index' %}">Home</a>
+            <a href="{% url 'search_history' %}">History</a>
+            <a href="{% url 'logout' %}">Logout</a>
         </div>
     </nav>
 
     <main class="profile-container">
         <div class="profile-card">
             <div class="profile-header">
-                <h1>{% trans "My Profile" %}</h1>
+                <h1>My Profile</h1>
             </div>
             
             {% if messages %}
@@ -223,8 +173,8 @@
             {% endif %}
             
             <div class="profile-info">
-                <p><strong>{% trans "Email:" %}</strong> {{ user.email }}</p>
-                <p><strong>{% trans "Member Since:" %}</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Member Since:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
             </div>
             
             <form method="POST" action="{% url 'profile' %}">

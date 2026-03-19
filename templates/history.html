@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-{% load i18n %}
-<html lang="{{ LANGUAGE_CODE }}">
+
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>{% trans "Search History - Cosmetic Detector" %}</title>
+    <title>Search History - Cosmetic Detector</title>
     <link rel="stylesheet" href="/static/styles/main.css">
     <style>
         * { color: black !important; }
@@ -63,7 +63,7 @@
             color: #155724 !important;
         }
         
-        .safety-badge.caution {
+        .safety-badge.mild-risk {
             background: #fff3cd;
             color: #856404 !important;
         }
@@ -110,41 +110,6 @@
             padding: 3rem;
             color: #666 !important;
         }
-        
-        .language-toggle {
-            display: flex;
-            gap: 0.5rem;
-            margin-right: 1rem;
-        }
-        
-        .lang-btn {
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #ddd;
-            background: white;
-            color: #333;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            text-decoration: none;
-            display: inline-block;
-        }
-        
-        .lang-btn.active {
-            background: #007bff;
-            color: white;
-            border-color: #007bff;
-        }
-        
-        .lang-btn:hover {
-            background: #f8f9fa;
-            text-decoration: none;
-            color: #333;
-        }
-        
-        .lang-btn.active:hover {
-            background: #0056b3;
-            color: white;
-        }
     </style>
 </head>
 <body>
@@ -155,29 +120,14 @@
             <div class="logo">
                 <a href="/" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
                     <span class="logo-icon">🧴</span>
-                    <span class="logo-text">{% trans "Cosmetic Detector" %}</span>
+                    <span class="logo-text">Cosmetic Detector</span>
                 </a>
             </div>
             <div class="nav-actions">
-                <!-- REPLACE YOUR EXISTING language-toggle div WITH THIS -->
-                <div class="language-toggle">
-                    <form method="post" action="{% url 'set_language' %}" style="display:inline;">
-                        {% csrf_token %}
-                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                        <input name="language" type="hidden" value="en">
-                        <button type="submit" class="lang-btn {% if LANGUAGE_CODE == 'en' %}active{% endif %}">EN</button>
-                    </form>
-                    <form method="post" action="{% url 'set_language' %}" style="display:inline;">
-                        {% csrf_token %}
-                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                        <input name="language" type="hidden" value="mr">
-                        <button type="submit" class="lang-btn {% if LANGUAGE_CODE == 'mr' %}active{% endif %}">मराठी</button>
-                    </form>
-                </div>
                 <div class="nav-links">
-                    <a href="/" class="btn-secondary">{% trans "Home" %}</a>
-                    <a href="{% url 'profile' %}" class="btn-secondary">{% trans "Profile" %}</a>
-                    <a href="{% url 'logout' %}" class="btn-logout">{% trans "Logout" %}</a>
+                    <a href="/" class="btn-secondary">Home</a>
+                    <a href="{% url 'profile' %}" class="btn-secondary">Profile</a>
+                    <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
                 </div>
             </div>
             <button class="mobile-menu-toggle" id="mobileMenuToggle">
@@ -187,9 +137,9 @@
         
         <!-- Mobile Menu -->
         <div class="nav-links mobile-menu" id="mobileMenu">
-            <a href="/">{% trans "Home" %}</a>
-            <a href="{% url 'profile' %}">{% trans "Profile" %}</a>
-            <a href="{% url 'logout' %}">{% trans "Logout" %}</a>
+            <a href="/">Home</a>
+            <a href="{% url 'profile' %}">Profile</a>
+            <a href="{% url 'logout' %}">Logout</a>
         </div>
     </nav>
 
@@ -197,9 +147,9 @@
         <!-- Hidden form to ensure CSRF cookie is set -->
         <form style="display: none;">{% csrf_token %}</form>
         <div class="history-header">
-            <h1>{% trans "Search History" %}</h1>
+            <h1>Search History</h1>
             {% if history %}
-            <button id="clearAllHistoryBtn" class="btn-clear-all">{% trans "Clear All History" %}</button>
+            <button id="clearAllHistoryBtn" class="btn-clear-all">Clear All History</button>
             {% endif %}
         </div>
 
@@ -212,15 +162,15 @@
                             {{ item.scan.product_name }}
                             {% if item.scan.product_brand and item.scan.product_brand != 'Unknown' %}
                                 <span style="color: #666 !important; font-size: 0.9rem; font-weight: normal;">
-                                    {% trans "by" %} {{ item.scan.product_brand }}
+                                    by {{ item.scan.product_brand }}
                                 </span>
                             {% endif %}
                         {% else %}
-                            {% trans "Image Scan" %}
+                            Image Scan
                         {% endif %}
                     </div>
                     <div class="history-meta">
-                        <span class="safety-badge {{ item.scan.safety_rating|lower }}">
+                        <span class="safety-badge {{ item.scan.safety_rating|lower|slugify }}">
                             {{ item.scan.get_safety_rating_display }}
                         </span>
                         <span>{{ item.scan.source|title }} • </span>
@@ -228,16 +178,16 @@
                     </div>
                 </div>
                 <div class="history-actions">
-                    <a href="{% url 'results' item.scan.id %}" class="btn-view">{% trans "View" %}</a>
-                    <button class="btn-delete delete-history-btn" data-history-id="{{ item.id }}">{% trans "Delete" %}</button>
+                    <a href="{% url 'results' item.scan.id %}" class="btn-view">View</a>
+                    <button class="btn-delete delete-history-btn" data-history-id="{{ item.id }}">Delete</button>
                 </div>
             </div>
             {% endfor %}
         {% else %}
             <div class="empty-history">
-                <h2>{% trans "No Search History" %}</h2>
-                <p>{% trans "Your search history will appear here" %}</p>
-                <a href="/" class="btn-primary" style="margin-top: 1rem; display: inline-block;">{% trans "Start Scanning" %}</a>
+                <h2>No Search History</h2>
+                <p>Your search history will appear here</p>
+                <a href="/" class="btn-primary" style="margin-top: 1rem; display: inline-block;">Start Scanning</a>
             </div>
         {% endif %}        <!-- Footer -->
         <footer style="text-align: center; padding: 1.5rem; margin-top: 2rem; border-top: 1px solid rgba(0,0,0,0.1); font-size: 0.9rem; color: #666;">

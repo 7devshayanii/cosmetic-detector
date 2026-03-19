@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-{% load i18n %}
-<html lang="{{ LANGUAGE_CODE }}">
+
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% trans "Scan Results - Cosmetic Ingredient Detector" %}</title>
+    <title>Scan Results - Cosmetic Ingredient Detector</title>
     <link rel="stylesheet" href="/static/styles/main.css">
     <style>
         * {
@@ -13,41 +13,6 @@
         .highlight {
             background-color: yellow;
             font-weight: bold;
-        }
-        
-        .language-toggle {
-            display: flex;
-            gap: 0.5rem;
-            margin-right: 1rem;
-        }
-        
-        .lang-btn {
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #ddd;
-            background: white;
-            color: #333;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            text-decoration: none;
-            display: inline-block;
-        }
-        
-        .lang-btn.active {
-            background: #007bff;
-            color: white;
-            border-color: #007bff;
-        }
-        
-        .lang-btn:hover {
-            background: #f8f9fa;
-            text-decoration: none;
-            color: #333;
-        }
-        
-        .lang-btn.active:hover {
-            background: #0056b3;
-            color: white;
         }
     </style>
 </head>
@@ -58,36 +23,21 @@
         <div class="nav-content">
             <div class="logo">
                 <span class="logo-icon">🧴</span>
-                <span class="logo-text">{% trans "Cosmetic Detector" %}</span>
+                <span class="logo-text">Cosmetic Detector</span>
             </div>
             <div class="nav-actions">
-                <!-- REPLACE YOUR EXISTING language-toggle div WITH THIS -->
-                <div class="language-toggle">
-                    <form method="post" action="{% url 'set_language' %}" style="display:inline;">
-                        {% csrf_token %}
-                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                        <input name="language" type="hidden" value="en">
-                        <button type="submit" class="lang-btn {% if LANGUAGE_CODE == 'en' %}active{% endif %}">EN</button>
-                    </form>
-                    <form method="post" action="{% url 'set_language' %}" style="display:inline;">
-                        {% csrf_token %}
-                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                        <input name="language" type="hidden" value="mr">
-                        <button type="submit" class="lang-btn {% if LANGUAGE_CODE == 'mr' %}active{% endif %}">मराठी</button>
-                    </form>
-                </div>
                 {% if user.is_authenticated %}
                     <div class="nav-links">
-                        <a href="{% url 'search_history' %}" class="btn-secondary">{% trans "History" %}</a>
-                        <a href="{% url 'profile' %}" class="btn-secondary">{% trans "Profile" %}</a>
-                        <a href="{% url 'disclaimer' %}" class="btn-secondary">{% trans "Disclaimer" %}</a>
-                        <a href="{% url 'logout' %}" class="btn-secondary">{% trans "Logout" %}</a>
+                        <a href="{% url 'search_history' %}" class="btn-secondary">History</a>
+                        <a href="{% url 'profile' %}" class="btn-secondary">Profile</a>
+                        <a href="{% url 'disclaimer' %}" class="btn-secondary">Disclaimer</a>
+                        <a href="{% url 'logout' %}" class="btn-secondary">Logout</a>
                     </div>
                 {% else %}
                     <div class="nav-links">
-                        <a href="{% url 'disclaimer' %}" class="btn-secondary">{% trans "Disclaimer" %}</a>
-                        <a href="{% url 'login' %}" class="btn-secondary">{% trans "Login" %}</a>
-                        <a href="{% url 'register' %}" class="btn-primary">{% trans "Register" %}</a>
+                        <a href="{% url 'disclaimer' %}" class="btn-secondary">Disclaimer</a>
+                        <a href="{% url 'login' %}" class="btn-secondary">Login</a>
+                        <a href="{% url 'register' %}" class="btn-primary">Register</a>
                     </div>
                 {% endif %}
             </div>
@@ -99,67 +49,68 @@
         <!-- Mobile Menu -->
         {% if user.is_authenticated %}
             <div class="nav-links mobile-menu" id="mobileMenu">
-                <a href="{% url 'search_history' %}">{% trans "History" %}</a>
-                <a href="{% url 'profile' %}">{% trans "Profile" %}</a>
-                <a href="{% url 'disclaimer' %}">{% trans "Disclaimer" %}</a>
-                <a href="{% url 'logout' %}">{% trans "Logout" %}</a>
+                <a href="{% url 'search_history' %}">History</a>
+                <a href="{% url 'profile' %}">Profile</a>
+                <a href="{% url 'disclaimer' %}">Disclaimer</a>
+                <a href="{% url 'logout' %}">Logout</a>
             </div>
         {% else %}
             <div class="nav-links mobile-menu" id="mobileMenu">
-                <a href="{% url 'disclaimer' %}">{% trans "Disclaimer" %}</a>
-                <a href="{% url 'login' %}">{% trans "Login" %}</a>
-                <a href="{% url 'register' %}">{% trans "Register" %}</a>
+                <a href="{% url 'disclaimer' %}">Disclaimer</a>
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'register' %}">Register</a>
             </div>
         {% endif %}
     </nav>
 
     <main class="container results-container">
-        {% if scan.product_name %}
         <div style="text-align: center; margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 3px solid #667eea;">
             <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                {{ scan.product_name }}
+                {% if scan.product_name and scan.product_name != 'Unknown' and scan.product_name != 'Unknown Product' %}
+                    {{ scan.product_name }}
+                {% else %}
+                    {% if scan.source == 'IMAGE' %}Image Scan Analysis{% else %}Product Analysis{% endif %}
+                {% endif %}
             </h1>
             {% if scan.product_brand and scan.product_brand != 'Unknown' %}
             <p style="font-size: 1.25rem; color: #666 !important; margin-bottom: 0.25rem;">
-                {% trans "Brand:" %} <strong style="color: #333 !important;">{{ scan.product_brand }}</strong>
+                Brand: <strong style="color: #333 !important;">{{ scan.product_brand }}</strong>
             </p>
             {% endif %}
             <p style="font-size: 0.9rem; color: #999 !important;">
-                {% trans "Scanned via:" %} {{ scan.get_source_display }} • {{ scan.scanned_at|date:"M d, Y - g:i A" }}
+                Scanned via: {{ scan.get_source_display }} • {{ scan.scanned_at|date:"M d, Y - g:i A" }}
             </p>
         </div>
-        {% endif %}
 
         <div class="results-header">
-            <h1>{% trans "Analysis Results" %}</h1>
+            <h1>Analysis Results</h1>
             <div>
                 {% if safety_rating == 'SAFE' %}
                     <div class="safety-badge badge-safe">{{ safety_rating }}</div>
-                {% elif safety_rating == 'CAUTION' %}
-                    <div class="safety-badge badge-caution">{{ safety_rating }}</div>
+                {% elif safety_rating == 'MILD RISK' %}
+                    <div class="safety-badge badge-mild-risk">{{ safety_rating }}</div>
                 {% elif safety_rating == 'HARMFUL' %}
                     <div class="safety-badge badge-harmful">{{ safety_rating }}</div>
                 {% endif %}
                 
+                {% if veg_status == 'VEG' or veg_status == 'ANIMAL_DERIVED' %}
                 <div class="veg-badge">
                     {% if veg_status == 'VEG' %}
                         <span>🌱</span>
-                        <span>{% trans "Vegetarian" %}</span>
+                        <span>Vegetarian</span>
                     {% elif veg_status == 'ANIMAL_DERIVED' %}
                         <span>🥩</span>
-                        <span>{% trans "Animal Derived" %}</span>
-                    {% else %}
-                        <span>❓</span>
-                        <span>{% trans "Unknown" %}</span>
+                        <span>Animal Derived</span>
                     {% endif %}
                 </div>
+                {% endif %}
             </div>
         </div>
 
         <div class="glass-card results-section">
             <h2 class="section-title">
                 <span>📄</span>
-                {% trans "Extracted Ingredients" %}
+                Extracted Ingredients
             </h2>
             <div class="extracted-text-box">
                 {{ highlighted_text|default:"No text extracted" }}
@@ -172,7 +123,7 @@
                 <div class="glass-card results-section">
                     <h2 class="section-title">
                         <span>⚠️</span>
-                        {% trans "Harmful Ingredients Detected" %}
+                        Harmful Ingredients Detected
                     </h2>
                     <div class="harmful-list">
                         {% for item in harmful_ingredients %}
@@ -185,7 +136,7 @@
 
                                         <!-- ✅ RISK LEVEL ADDED HERE -->
                                         <div class="risk-level">
-                                            <strong>{% trans "Risk Level:" %}</strong> {{ item.risk_level }}
+                                            <strong>Risk Level:</strong> {{ item.risk_level }}
                                         </div>
                                     </div>
                                 </div>
@@ -203,15 +154,15 @@
                 <div class="glass-card results-section">
                     <div style="text-align: center; padding: 2rem;">
                         <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
-                        <h3 style="color: #d32f2f; margin-bottom: 1rem;">{% trans "Harmful Ingredients Detected" %}</h3>
+                        <h3 style="color: #d32f2f; margin-bottom: 1rem;">Harmful Ingredients Detected</h3>
                         <p style="color: #666; font-size: 1.1rem; margin-bottom: 1.5rem;">
-                            {% trans "This product contains ingredients that may not be suitable for general use." %}
+                            This product contains ingredients that may not be suitable for general use.
                         </p>
                         <a href="{% url 'register' %}" class="btn-primary" style="display: inline-block; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 8px; font-weight: bold;">
-                            🔓 {% trans "Register for More Details" %}
+                            🔓 Register for More Details
                         </a>
                         <p style="color: #999; font-size: 0.9rem; margin-top: 1rem;">
-                            {% trans "Sign up to see detailed risk levels, ingredient reasons, and personalized recommendations" %}
+                            Sign up to see detailed risk levels, ingredient reasons, and personalized recommendations
                         </p>
                     </div>
                 </div>
@@ -220,8 +171,8 @@
             <div class="glass-card results-section">
                 <div class="safe-message">
                     <div class="icon">✅</div>
-                    <h3>{% trans "Great News!" %}</h3>
-                    <p>{% trans "No harmful ingredients detected in this product." %}</p>
+                    <h3>Great News!</h3>
+                    <p>No harmful ingredients detected in this product.</p>
                 </div>
             </div>
         {% endif %}
@@ -229,7 +180,7 @@
 {% if user.is_authenticated %}
     {% if scan.personalized_warnings %}
     <div class="glass-card" style="margin-top: 1rem; border-left: 4px solid #ff9800;">
-        <h3>⚠️ {% trans "Personalized Warnings" %}</h3>
+        <h3>⚠️ Personalized Warnings</h3>
         
         {% for warning in scan.personalized_warnings %}
         <div style="padding: 0.75rem; margin: 0.5rem 0; background: 
@@ -252,13 +203,16 @@
     {% endif %}
 
     <!-- INGREDIENT SOURCE (Animal/Plant/Synthetic) -->
+    {% if scan.ingredient_source != 'UNKNOWN' or scan.animal_ingredients %}
     <div class="glass-card" style="margin-top: 1rem;">
-        <h3>🌿 {% trans "Ingredient Source" %}</h3>
-        <p><strong>{% trans "Classification:" %}</strong> {{ scan.get_ingredient_source_display }}</p>
+        <h3>🌿 Ingredient Source</h3>
+        {% if scan.ingredient_source != 'UNKNOWN' %}
+        <p><strong>Classification:</strong> {{ scan.get_ingredient_source_display }}</p>
+        {% endif %}
         
         {% if scan.animal_ingredients %}
         <div style="margin-top: 1rem;">
-            <strong>{% trans "Animal-Derived Ingredients Found:" %}</strong>
+            <strong>Animal-Derived Ingredients Found:</strong>
             <ul>
                 {% for ingredient in scan.animal_ingredients %}
                 <li>{{ ingredient }}</li>
@@ -267,15 +221,16 @@
         </div>
         {% endif %}
     </div>
+    {% endif %}
 {% else %}
     <!-- GUEST USER: Show registration prompt -->
     <div class="glass-card" style="margin-top: 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem; text-align: center;">
-        <h3 style="color: white; margin-bottom: 1rem;">🔒 {% trans "Unlock Personalized Analysis" %}</h3>
+        <h3 style="color: white; margin-bottom: 1rem;">🔒 Unlock Personalized Analysis</h3>
         <p style="color: rgba(255,255,255,0.9); margin-bottom: 1.5rem; font-size: 1.05rem;">
-            {% trans "See detailed safety warnings based on your age, allergies, and health conditions" %}
+            See detailed safety warnings based on your age, allergies, and health conditions
         </p>
         <a href="{% url 'register' %}" class="btn-primary" style="display: inline-block; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 8px; font-weight: bold; background-color: white; color: #667eea;">
-            ✨ {% trans "Sign Up Now" %}
+            ✨ Sign Up Now
         </a>
     </div>
 {% endif %}
@@ -285,7 +240,7 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
-                {% trans "Scan Another Product" %}
+                Scan Another Product
             </a>
         </div>
         

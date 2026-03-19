@@ -410,7 +410,7 @@ def analyze_ingredients(text, user_age=None, user_allergies=None, user_health_co
     if critical_warnings or total_harmful_count > 3:
         safety_rating = 'HARMFUL'
     elif high_warnings or total_harmful_count > 1:
-        safety_rating = 'CAUTION'
+        safety_rating = 'MILD RISK'
     else:
         safety_rating = 'SAFE'
     

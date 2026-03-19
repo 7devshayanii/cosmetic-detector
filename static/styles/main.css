@@ -97,9 +97,17 @@ body {
     gap: 1rem;
     align-items: center;
 }
+
+.profile-btn {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -447,7 +455,7 @@ body {
     color: white;
 }
 
-.badge-caution {
+.badge-mild-risk {
     background: linear-gradient(135deg, #f59e0b, #fbbf24);
     color: white;
 }

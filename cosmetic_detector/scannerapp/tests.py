@@ -169,7 +169,7 @@ class IngredientAnalysisTests(TestCase):
         analysis = analyze_ingredients(
             "Aqua, Parabens, Sulfates, Phthalates"
         )
-        self.assertIn(analysis['safety_rating'], ['CAUTION', 'UNSAFE'])
+        self.assertIn(analysis['safety_rating'], ['MILD RISK', 'UNSAFE'])
         self.assertGreater(len(analysis['harmful_ingredients']), 0)
     
     def test_ingredient_analysis_case_insensitive(self):

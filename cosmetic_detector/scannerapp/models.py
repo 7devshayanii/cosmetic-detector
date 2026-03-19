@@ -35,7 +35,7 @@ class Scan(models.Model):
     """
     SAFETY_CHOICES = [
         ('SAFE', 'Safe'),
-        ('CAUTION', 'Caution'),
+        ('MILD RISK', 'Mild Risk'),
         ('HARMFUL', 'Harmful'),
     ]
     

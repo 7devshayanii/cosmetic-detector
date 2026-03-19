@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-{% load i18n %}
-<html lang="{{ LANGUAGE_CODE }}">
+
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% trans "Product Selection - Cosmetic Ingredient Detector" %}</title>
+    <title>Product Selection - Cosmetic Ingredient Detector</title>
     <link rel="stylesheet" href="/static/styles/main.css">
     <style>
         * { color: black !important; }
@@ -112,41 +112,6 @@
         .back-btn:hover {
             background: #7f8c8d;
         }
-        
-        .language-toggle {
-            display: flex;
-            gap: 0.5rem;
-            margin-right: 1rem;
-        }
-        
-        .lang-btn {
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #ddd;
-            background: white;
-            color: #333;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            text-decoration: none;
-            display: inline-block;
-        }
-        
-        .lang-btn.active {
-            background: #007bff;
-            color: white;
-            border-color: #007bff;
-        }
-        
-        .lang-btn:hover {
-            background: #f8f9fa;
-            text-decoration: none;
-            color: #333;
-        }
-        
-        .lang-btn.active:hover {
-            background: #0056b3;
-            color: white;
-        }
     </style>
 </head>
 <body>
@@ -156,34 +121,19 @@
         <div class="nav-content">
             <div class="logo">
                 <span class="logo-icon">🧴</span>
-                <span class="logo-text">{% trans "Cosmetic Detector" %}</span>
+                <span class="logo-text">Cosmetic Detector</span>
             </div>
             <div class="nav-actions">
-                <!-- REPLACE YOUR EXISTING language-toggle div WITH THIS -->
-                <div class="language-toggle">
-                    <form method="post" action="{% url 'set_language' %}" style="display:inline;">
-                        {% csrf_token %}
-                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                        <input name="language" type="hidden" value="en">
-                        <button type="submit" class="lang-btn {% if LANGUAGE_CODE == 'en' %}active{% endif %}">EN</button>
-                    </form>
-                    <form method="post" action="{% url 'set_language' %}" style="display:inline;">
-                        {% csrf_token %}
-                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                        <input name="language" type="hidden" value="mr">
-                        <button type="submit" class="lang-btn {% if LANGUAGE_CODE == 'mr' %}active{% endif %}">मराठी</button>
-                    </form>
-                </div>
                 {% if user.is_authenticated %}
                     <div class="nav-links">
-                        <a href="{% url 'search_history' %}" class="btn-secondary">{% trans "History" %}</a>
-                        <a href="{% url 'profile' %}" class="btn-secondary">{% trans "Profile" %}</a>
-                        <a href="{% url 'logout' %}" class="btn-secondary">{% trans "Logout" %}</a>
+                        <a href="{% url 'search_history' %}" class="btn-secondary">History</a>
+                        <a href="{% url 'profile' %}" class="btn-secondary">Profile</a>
+                        <a href="{% url 'logout' %}" class="btn-secondary">Logout</a>
                     </div>
                 {% else %}
                     <div class="nav-links">
-                        <a href="{% url 'login' %}" class="btn-secondary">{% trans "Login" %}</a>
-                        <a href="{% url 'register' %}" class="btn-primary">{% trans "Register" %}</a>
+                        <a href="{% url 'login' %}" class="btn-secondary">Login</a>
+                        <a href="{% url 'register' %}" class="btn-primary">Register</a>
                     </div>
                 {% endif %}
             </div>
@@ -195,41 +145,41 @@
         <!-- Mobile Menu -->
         {% if user.is_authenticated %}
             <div class="nav-links mobile-menu" id="mobileMenu">
-                <a href="{% url 'search_history' %}">{% trans "History" %}</a>
-                <a href="{% url 'profile' %}">{% trans "Profile" %}</a>
-                <a href="{% url 'logout' %}">{% trans "Logout" %}</a>
+                <a href="{% url 'search_history' %}">History</a>
+                <a href="{% url 'profile' %}">Profile</a>
+                <a href="{% url 'logout' %}">Logout</a>
             </div>
         {% else %}
             <div class="nav-links mobile-menu" id="mobileMenu">
-                <a href="{% url 'login' %}">{% trans "Login" %}</a>
-                <a href="{% url 'register' %}">{% trans "Register" %}</a>
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'register' %}">Register</a>
             </div>
         {% endif %}
     </nav>
 
     <main class="container">
         <div class="glass-card" style="margin-bottom: 2rem;">
-            <a href="{% url 'index' %}" class="back-btn">← {% trans "Back to Search" %}</a>
-            <h1 style="margin-top: 0;">{% trans "Select a Product from" %} "{{ search_term }}"</h1>
-            <p style="color: #666;">{% trans "Found" %} {{ products|length }} {% trans "product" %}{{ products|length|pluralize }}</p>
+            <a href="{% url 'index' %}" class="back-btn">← Back to Search</a>
+            <h1 style="margin-top: 0;">Select a Product from "{{ search_term }}"</h1>
+            <p style="color: #666;">Found {{ products|length }} product{{ products|length|pluralize }}</p>
         </div>
 
         <div class="products-grid">
             {% for product in products %}
             <div class="product-card">
                 <div class="product-name">{{ product.product_name }}</div>
-                <div class="product-brand">{% trans "Brand:" %} {{ product.brand }}</div>
+                <div class="product-brand">Brand: {{ product.brand }}</div>
                 <div class="product-source">{{ product.source }}</div>
 
                 {% if product.ingredients_text %}
                 <div class="ingredients-preview">
-                    <strong>{% trans "Ingredients:" %}</strong><br>
+                    <strong>Ingredients:</strong><br>
                     {{ product.ingredients_text|truncatechars:100 }}
                 </div>
                 {% endif %}
 
                 <button class="analyze-btn" onclick="analyzeProduct({{ forloop.counter0 }}, '{{ product.product_name|escapejs }}')">
-                    {% trans "Analyze This Product" %}
+                    Analyze This Product
                 </button>
             </div>
             {% endfor %}
@@ -237,9 +187,9 @@
 
         {% if not products %}
         <div class="glass-card" style="text-align: center; padding: 3rem;">
-            <h2>{% trans "No Products Found" %}</h2>
-            <p>{% trans "Try searching with a different term or go back to search." %}</p>
-            <a href="{% url 'index' %}" class="btn-primary" style="margin-top: 1rem;">{% trans "Back to Search" %}</a>
+            <h2>No Products Found</h2>
+            <p>Try searching with a different term or go back to search.</p>
+            <a href="{% url 'index' %}" class="btn-primary" style="margin-top: 1rem;">Back to Search</a>
         </div>
         {% endif %}
         
